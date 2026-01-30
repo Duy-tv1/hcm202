@@ -3,7 +3,7 @@
 
 class SlideManager {
     constructor() {
-        this.totalSlides = 23;
+        this.totalSlides = 25;
         this.currentSlide = 1;
         this.svgCache = {};
         this.isLoading = false;

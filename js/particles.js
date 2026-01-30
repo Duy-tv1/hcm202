@@ -14,7 +14,7 @@ let previousAnimationState = "CHAOS"; // Track state changes
 // Animation state machine
 let animationState = "CHAOS"; // CHAOS hoặc MAP_FORMING
 let stateTimer = 0;
-const CHAOS_DURATION = 5000; // 5 giây hỗn loạn
+const CHAOS_DURATION = 8000; // 8 giây hỗn loạn
 const MAP_DURATION = 10000; // 10 giây hiển thị bản đồ
 let mapTargetPositions = []; // Lưu tọa độ target của bản đồ
 

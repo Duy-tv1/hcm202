@@ -1,0 +1,237 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap');
+
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background-color: #000;
+    font-family: 'Inter', sans-serif;
+    color: white;
+}
+
+#canvas-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    background: radial-gradient(circle at center, #111 0%, #000 100%);
+}
+
+.webcam-container {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    z-index: 10;
+    width: 160px;
+    height: 120px;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    background: #000;
+    transform: scaleX(-1); /* Mirror locally to match canvas flip logic */
+    opacity: 0.8;
+    transition: opacity 0.3s;
+}
+
+.webcam-container:hover {
+    opacity: 1;
+}
+
+.webcam-container .output_canvas {
+    width: 100%;
+    height: 100%;
+    /* No generic flip here if gestures.js draws flipped image? 
+       Actually gestures.js draws image normally, we flip container to mirror user 
+    */
+}
+
+.input_video {
+    display: none;
+}
+
+#ui-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 5;
+    pointer-events: none;
+    box-sizing: border-box;
+}
+
+#stage-info {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.95);
+    width: 80%;
+    max-width: 600px;
+    opacity: 0;
+    transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+    background: rgba(0,0,0,0.8); 
+    padding: 40px;
+    border-radius: 20px;
+    border: 1px solid rgba(79, 172, 254, 0.3);
+    box-shadow: 0 0 50px rgba(0,0,0,0.8);
+    backdrop-filter: blur(15px);
+    text-align: center;
+}
+
+#stage-info.active {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+#stage-title {
+    font-size: 2.5rem;
+    font-weight: 900;
+    margin: 0 0 1rem 0;
+    text-transform: uppercase;
+    background: linear-gradient(to right, #4facfe, #00f2fe);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 2px;
+    text-shadow: 0 0 30px rgba(79, 172, 254, 0.3);
+}
+
+#stage-desc {
+    font-size: 1.1rem;
+    line-height: 1.5;
+    color: #f0f0f0;
+    margin-bottom: 1rem;
+    font-weight: 300;
+}
+
+#stage-details {
+    font-size: 0.9rem;
+    color: #9cb3c9;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 1rem;
+    line-height: 1.5;
+}
+
+#loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto;
+    transition: opacity 0.5s;
+}
+
+.loader {
+    width: 50px;
+    height: 50px;
+    border: 3px solid rgba(255,255,255,0.1);
+    border-top: 3px solid #4facfe;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 24px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+#start-btn {
+    padding: 14px 28px;
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 15px;
+    opacity: 0.5;
+    pointer-events: none;
+    transition: all 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 15px rgba(0, 242, 254, 0.3);
+}
+
+#start-btn:enabled {
+    opacity: 1;
+    cursor: pointer;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
+#start-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 242, 254, 0.5);
+}
+
+#slide-info-overlay.visible-overlay { opacity: 1; pointer-events: auto; }
+        
+        /* Grid Card System */
+        .grid-container {
+            display: grid;
+            width: 100%;
+            height: 100%;
+            gap: 2rem; /* Large gap between cards */
+            padding: 2rem;
+            box-sizing: border-box;
+            transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .grid-card {
+            background: rgba(20, 20, 22, 0.6); /* Dark, semi-transparent */
+            backdrop-filter: blur(20px) saturate(1.5);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 2.5rem;
+            color: #EAEAEA;
+            text-align: left;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: all 0.5s ease;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .grid-card h3 {
+            font-size: 1.5rem;
+            font-weight: 900;
+            margin: 0 0 1rem 0;
+            color: #FFFFFF;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .grid-card p {
+            font-size: 1rem;
+            line-height: 1.6;
+            font-weight: 300;
+            color: #BFC9D9;
+            margin: 0;
+        }
+
+        /* Animation for cards appearing */
+        /* .visible-overlay .grid-card {
+             opacity: 1;
+             transform: translateY(0);
+        } */
+
+        /* Staggered animation delays */
+        .visible-overlay .grid-card:nth-child(1) { transition-delay: 0.1s; }
+        .visible-overlay .grid-card:nth-child(2) { transition-delay: 0.2s; }
+        .visible-overlay .grid-card:nth-child(3) { transition-delay: 0.3s; }
+        .visible-overlay .grid-card:nth-child(4) { transition-delay: 0.4s; }
+        .visible-overlay .grid-card:nth-child(5) { transition-delay: 0.5s; }
+        .visible-overlay .grid-card:nth-child(6) { transition-delay: 0.6s; }
